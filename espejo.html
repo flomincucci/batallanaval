@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/socket.io.js"></script>
+    <script>    
+
+WEB_SOCKET_SWF_LOCATION = "/js/WebSocketMain.swf";
+WEB_SOCKET_DEBUG = true;
+
+// socket.io specific code
+var socket = io.connect("/espejo");
+
+socket.on('connect', function () {
+		socket.emit('nickname','alice');
+    $('#espejo').append('Conectado<br />');
+});
+
+socket.on('announcement', function (msg) {
+    $('#lines').append($('<p>').append($('<em>').text(msg)));
+});
+
+socket.on('nicknames', function (nicknames) {
+    $('#nicknames').empty().append($('<span>Online: </span>'));
+    for (var i in nicknames) {
+	  $('#nicknames').append($('<b>').text(nicknames[i]));
+    }
+});
+
+socket.on('msg_to_room', message);
+socket.on('new_movement', move);
+
+socket.on('reconnect', function () {
+    $('#lines').remove();
+    message('System', 'Reconnected to the server');
+});
+
+socket.on('reconnecting', function () {
+    message('System', 'Attempting to re-connect to the server');
+});
+
+socket.on('error', function (e) {
+    message('System', e ? e : 'A unknown error occurred');
+});
+
+function message (from, msg) {
+    $('#lines').append($('<p>').append($('<b>').text(from), msg));
+}
+
+function move (from, movement) {
+    $('#lines').append($('<p>').append($('<b>').text(from), movement));
+}
+
+// DOM manipulation
+$(function () {
+    $('#send-message').submit(function () {
+	    message('me', $('#message').val());
+	    socket.emit('user message', $('#message').val());
+	    clear();
+	    $('#lines').get(0).scrollTop = 10000000;
+	    return false;
+    });
+
+		$("input").click(function () {
+			console.log('Estoy funcionndo');
+			//var position = $(this).parent().css('class') + '|' + $(this).css('class');
+			socket.emit('move',"11");
+	    clear();
+			return false;
+		});
+
+    function clear () {
+        $('#message').val('').focus();
+    };
+});
+    </script>
+  </head>
+<body>
+	<div id="espejo">
+	<h1>El espejo</h1>
+	</div>
+
+	<table>
+		<tr class="row-first">
+			<td class="col-first"><input type="checkbox"></td>
+			<td class="col-second"><input type="checkbox"></td>
+			<td class="col-third"><input type="checkbox"></td>
+		</tr>
+		<tr class="row-second">
+			<td class="col-first"><input type="checkbox"></td>
+			<td class="col-second"><input type="checkbox"></td>
+			<td class="col-third"><input type="checkbox"></td>
+		</tr>
+		<tr class="row-third">
+			<td class="col-first"><input type="checkbox"></td>
+			<td class="col-second"><input type="checkbox"></td>
+			<td class="col-third"><input type="checkbox"></td>
+		</tr>
+
+	</table>
+
+  <div id="chat">
+    <div id="messages">
+      <div id="nicknames"><span>Online:</span></div>
+      <div id="lines"></div>
+    </div>
+    <form id="send-message">
+      <input id="message">
+      <button>Send</button>
+    </form>
+  </div>
+</body>
+</html>
