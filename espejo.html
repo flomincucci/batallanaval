@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="css/style.css" rel="stylesheet">
+    <link   href="css/style.css" rel="stylesheet">
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/socket.io.js"></script>
     <script>    
@@ -13,8 +13,7 @@ WEB_SOCKET_DEBUG = true;
 var socket = io.connect("/espejo");
 
 socket.on('connect', function () {
-		socket.emit('nickname','alice');
-    $('#espejo').append('Conectado<br />');
+    socket.emit('nickname','alice');
 });
 
 socket.on('announcement', function (msg) {
@@ -49,7 +48,9 @@ function message (from, msg) {
 }
 
 function move (from, movement) {
-    $('#lines').append($('<p>').append($('<b>').text(from), movement));
+		var row = movement.substring(0,8);
+		var col = movement.substring(9,19);
+		$('.' + row + ' > .' + col + ' > input').attr('checked','checked');
 }
 
 // DOM manipulation
@@ -63,11 +64,9 @@ $(function () {
     });
 
 		$("input").click(function () {
-			console.log('Estoy funcionndo');
-			//var position = $(this).parent().css('class') + '|' + $(this).css('class');
-			socket.emit('move',"11");
+			var position = $(this).parent().parent().attr('class') + '|' + $(this).parent().attr('class');
+			socket.emit('move',position);
 	    clear();
-			return false;
 		});
 
     function clear () {
@@ -82,20 +81,20 @@ $(function () {
 	</div>
 
 	<table>
-		<tr class="row-first">
-			<td class="col-first"><input type="checkbox"></td>
-			<td class="col-second"><input type="checkbox"></td>
-			<td class="col-third"><input type="checkbox"></td>
+		<tr class="row-frst">
+			<td class="col-frst"><input type="checkbox"></td>
+			<td class="col-scnd"><input type="checkbox"></td>
+			<td class="col-thrd"><input type="checkbox"></td>
 		</tr>
-		<tr class="row-second">
-			<td class="col-first"><input type="checkbox"></td>
-			<td class="col-second"><input type="checkbox"></td>
-			<td class="col-third"><input type="checkbox"></td>
+		<tr class="row-scnd">
+			<td class="col-frst"><input type="checkbox"></td>
+			<td class="col-scnd"><input type="checkbox"></td>
+			<td class="col-thrd"><input type="checkbox"></td>
 		</tr>
-		<tr class="row-third">
-			<td class="col-first"><input type="checkbox"></td>
-			<td class="col-second"><input type="checkbox"></td>
-			<td class="col-third"><input type="checkbox"></td>
+		<tr class="row-thrd">
+			<td class="col-frst"><input type="checkbox"></td>
+			<td class="col-scnd"><input type="checkbox"></td>
+			<td class="col-thrd"><input type="checkbox"></td>
 		</tr>
 
 	</table>

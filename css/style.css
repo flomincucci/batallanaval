@@ -1,7 +1,7 @@
-.row-first td, .row-second td {
+.row-frst td, .row-scnd td {
 	border-bottom: 1px solid #000;
 }
 
-.col-first, .col-second {
+.col-frst, .col-scnd {
 	border-right: 1px solid #000;
 }
