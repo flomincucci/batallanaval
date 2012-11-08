@@ -1,109 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-    <link   href="css/style.css" rel="stylesheet">
-    <link   href="css/smoothness/jquery-ui.css" rel="stylesheet">
+		<link   href="css/style.css" rel="stylesheet">
+		<link   href="css/smoothness/jquery-ui.css" rel="stylesheet">
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/jquery-ui.js"></script>
 		<script type="text/javascript" src="js/socket.io.js"></script>
-		<script>    
-
-WEB_SOCKET_SWF_LOCATION = "/js/WebSocketMain.swf";
-WEB_SOCKET_DEBUG = true;
-
-// socket.io specific code
-var socket = io.connect("/espejo");
-
-socket.on('connect', function () {
-	socket.emit('nickname','alice');
-});
-
-socket.on('announcement', function (msg) {
-	$('#lines').append($('<p>').append($('<em>').text(msg)));
-});
-
-socket.on('nicknames', function (nicknames) {
-	$('#nicknames').empty().append($('<span>Online: </span>'));
-	for (var i in nicknames) {
-		$('#nicknames').append($('<b>').text(nicknames[i]));
-	}
-});
-
-socket.on('msg_to_room', message);
-socket.on('new_movement', move);
-socket.on('input_pressed', pressed);
-socket.on('input_unpressed', unpressed);
-
-socket.on('reconnect', function () {
-	$('#lines').remove();
-	message('System', 'Reconnected to the server');
-});
-
-socket.on('reconnecting', function () {
-	message('System', 'Attempting to re-connect to the server');
-});
-
-socket.on('error', function (e) {
-	message('System', e ? e : 'A unknown error occurred');
-});
-
-function message (from, msg) {
-	$('#lines').append($('<p>').append($('<b>').text(from), msg));
-}
-
-function move (from, movement) {
-	var row = movement.substring(0,8);
-	var col = movement.substring(9,19);
-	$('.' + row + ' > .' + col + ' > input').attr('checked','checked');
-}
-
-function pressed (from, element) {
-	$('#controles input[name="' + element + '"]').addClass('ui-state-active');	
-}
-
-function unpressed (from, element) {
-	$('#controles input[name="' + element + '"]').removeClass('ui-state-active');	
-}
-
-// jQueryUI fun
-
-$(function() {
-
-	$("#controles input").button();
-	$("#losbotones").buttonset();
-	$('#controles[name="megusta"]').buttonset();
-
-});
-
-// DOM manipulation
-$(function () {
-		$('#send-message').submit(function () {
-			message('me', $('#message').val());
-			socket.emit('user message', $('#message').val());
-			clear();
-			$('#lines').get(0).scrollTop = 10000000;
-			return false;
-		});
-
-		$("#tateti input").click(function () {
-			var position = $(this).parent().parent().attr('class') + '|' + $(this).parent().attr('class');
-			socket.emit('move',position);
-		});
-
-		$("#controles input").bind({
-			'mousedown': function() {
-				socket.emit('pressed',$(this).attr('name'));
-			},
-			'mouseup': function() {
-				socket.emit('notpressed',$(this).attr('name'));
-			},
-		});
-
-		function clear () {
-			$('#message').val('').focus();
-		};
-});
-		</script>
+		<script type="text/javascript" src="js/socket-stuff.js"></script>
+		<script type="text/javascript" src="js/js.js"></script>
 	</head>
 <body>
 	<div id="espejo">
@@ -132,11 +36,9 @@ $(function () {
 
 	<div id="controles">
 		<div id="losbotones">
-			<input type="button" name="boton-1" value="Boton1" />
-			<input type="button" name="boton-2" value="Boton2" /><br />
+			<input type="button" id="boton-1" name="boton-1" value="Boton1" />
+			<input type="button" id="boton-2" name="boton-2" value="Boton2" /><br />
 		</div>
-		<input type="radio" id="radio-1" name="megusta" value="si"><label for="radio-1">Me gusta</label>
-		<input type="radio" id="radio-2" name="megusta" value="no"><label for="radio-2">No me gusta</label>
 	</div>
 
 
