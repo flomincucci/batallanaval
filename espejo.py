@@ -32,6 +32,14 @@ class EspejoNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         self.emit_to_room('main_room', 'new_movement',
             self.socket.session['nickname'], movement)
 
+    def on_pressed(self, element):
+        self.emit_to_room('main_room', 'input_pressed',
+            self.socket.session['nickname'], element)
+
+    def on_notpressed(self, element):
+        self.emit_to_room('main_room', 'input_unpressed',
+            self.socket.session['nickname'], element)
+
     def recv_message(self, message):
         print "PING!!!", message
 
