@@ -13,9 +13,10 @@ socket.on('announcement', function (msg) {
 });
 
 socket.on('nicknames', function (nicknames) {
-	$('#nicknames').empty().append($('<span>Online: </span>'));
+	$('#nicknames').empty().append($('<span>Online: </span><br />'));
 	for (var i in nicknames) {
 		$('#nicknames').append($('<b>').text(nicknames[i]));
+		$('#nicknames').append('<br />');
 	}
 });
 
@@ -44,6 +45,8 @@ function message (from, msg) {
 function move (from, movement) {
 	var row = movement.substring(0,8);
 	var col = movement.substring(9,19);
+	$('.' + row + ' > .' + col + ' > input').css('display','none');
+	$('.' + row + ' > .' + col + ' > input').parent().append('<label>O</label');
 	$('.' + row + ' > .' + col + ' > input').attr('checked','checked');
 }
 

@@ -20,6 +20,8 @@ $(function () {
 		$("#tateti input").click(function () {
 			var position = $(this).parent().parent().attr('class') + '|' + $(this).parent().attr('class');
 			socket.emit('move',position);
+			$(this).css('display','none');
+			$(this).parent().append('<label>X</label>');
 		});
 
 		$("#controles input").bind({

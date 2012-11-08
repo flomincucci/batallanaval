@@ -8,6 +8,10 @@ from socketio.mixins import RoomsMixin, BroadcastMixin
 
 class EspejoNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     def on_nickname(self, nickname):
+        if nickname in self.request['nicknames']:
+            nickname = self.request['av_nicknames'].pop()
+        else:
+            self.request['av_nicknames'].remove(nickname)
         self.request['nicknames'].append(nickname)
         self.socket.session['nickname'] = nickname
         self.broadcast_event('announcement', '%s has connected' % nickname)
@@ -19,6 +23,7 @@ class EspejoNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         # Remove nickname from the list.
         nickname = self.socket.session['nickname']
         self.request['nicknames'].remove(nickname)
+        self.request['av_nicknames'].append(nickname)
         self.broadcast_event('announcement', '%s has disconnected' % nickname)
         self.broadcast_event('nicknames', self.request['nicknames'])
 
@@ -52,6 +57,7 @@ class Application(object):
         # Dummy request object to maintain state between Namespace
         # initialization.
         self.request = {
+            'av_nicknames': ['alice','redqueen','madhatter','cheshire'],
             'nicknames': [],
         }
 
